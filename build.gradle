@@ -27,7 +27,8 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.security:spring-security-test'
-	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+	
 	
 
 
