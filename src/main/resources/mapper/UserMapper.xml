@@ -63,16 +63,17 @@
 	</insert>	
 	<!-- 회원 목록 불러오기(admin) -->
     <select id="read_user_list"  resultType="UserInfo">
-    	SELECT		ta.u_id					username,
-    						ta.u_name			name,
-							tb.u_auth			auth
-		FROM			user ta
+    	SELECT		ta.u_id				as	username,
+    				ta.u_name			as		name,
+					tb.u_auth			as		auth
+					
+		FROM		user ta
 		LEFT join	(
-								SELECT		ta.u_id,
-													GROUP_CONCAT(ta.u_auth SEPARATOR ",") u_auth
-								FROM			userauth tb
-								GROUP BY		ta.u_id
-							) tb ON ta.u_id = tb.u_id
+						SELECT		ta.u_id,
+						GROUP_CONCAT(ta.u_auth SEPARATOR ",") u_auth
+						FROM			userauth ta
+						GROUP BY		ta.u_id
+					)   tb ON ta.u_id = tb.u_id
 		    </select>
 	 <!-- 유저 권한 추가 -->
     <insert id="createAuthority" parameterType="org.springframework.security.core.GrantedAuthority">

@@ -55,22 +55,22 @@ public class TestController {
 	
 	@GetMapping("/boardDetail")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  boardDetail(@RequestParam int bId) {
+	public ResponseEntity<?>  boardDetail(@RequestParam int aIdx) {
 		
-		logger.info("///"+bId);
+		logger.info("///"+aIdx);
 		
-		Board board = boardService.selectBoardDetail(bId);
+		Board board = boardService.selectBoardDetail(aIdx);
 		return ResponseEntity.ok(board);
 	}
 	
-	@DeleteMapping("/boardDelete/{bId}")
+	@DeleteMapping("/boardDelete/{aIdx}")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  boardDelete(@PathVariable(value = "bId") int bId) {
+	public ResponseEntity<?>  boardDelete(@PathVariable(value = "aIdx") int aIdx) {
 		
-		logger.info("delete"+bId);
-		boardService.deleteBoard(bId);
+		logger.info("delete"+aIdx);
+		boardService.deleteBoard(aIdx);
 	
-		return ResponseEntity.ok(bId);
+		return ResponseEntity.ok(aIdx);
 	}
 	
 

@@ -10,7 +10,7 @@ import com.test1.project.domain.Board;
 public interface BoardService {
 	public List<Board> selectBoardList();
 	
-	public Board selectBoardDetail(int bId);
+	public Board selectBoardDetail(int aIdx);
 	
-	public void deleteBoard(int bId);
+	public void deleteBoard(int aIdx);
 }

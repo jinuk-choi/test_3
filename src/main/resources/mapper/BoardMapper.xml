@@ -4,15 +4,14 @@
 	<select id="selectBoardList" resultType="Board">
 		SELECT			a_idx as aIdx,
 						a_title as aTitle,
-						a_content as aContent,
-						a_writer as aWriter
+						a_content as aContent
+			
 		FROM			board
 	</select>
 	<select id="selectBoardDetail" resultType="Board" parameterType="int">
 		SELECT			a_idx as aIdx,
 								a_title as aTitle,
 								a_content as aContent,
-								a_writer as aWriter,
 								a_date as aDate
 		FROM				board
 		WHERE			a_idx = #{aIdx}
