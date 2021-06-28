@@ -45,7 +45,7 @@
 						</where>
 	   				</if> -->
 	      <!-- ORDER BY				a_group DESC, a_order DESC -->	  	  		   	
-	    LIMIT			#{pageNum},3
+	    LIMIT			#{pageNum},5
 	</select>
 	
 	<select id="selectBoardDetail" resultType="Board" resultMap="BoardMap">

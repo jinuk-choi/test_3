@@ -39,12 +39,14 @@ public class TestController {
 	@GetMapping({"/user","/user/{pageOpt}"})
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?>  userAccess(@PathVariable Optional<Integer> pageOpt) {
-		Pagination<Board> pagination = new Pagination<Board>();
-		List<Board> boardList = null;
-		
 		Search search = null;
 		int count = 0;
 		int page = pageOpt.isPresent() ? pageOpt.get() : 1;
+		
+		Pagination<Board> pagination = new Pagination<Board>();
+		List<Board> boardList = null;
+		
+		
 		
 		count = boardService.countBoard(search);
 		pagination = new Pagination<Board>(page,count);
