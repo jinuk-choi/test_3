@@ -19,4 +19,14 @@ public interface BoardMapper {
 	public void deleteBoard(int aIdx);
 	
 	public int countBoard(Search search);
+	
+	public void insertBoard(Board board);
+	
+	public void editBoard(Board board);
+	
+	public int count(Board board);
+	
+	public void updateBoard(Board board);
+	
+	public void updateReBoard(Board board);
 }

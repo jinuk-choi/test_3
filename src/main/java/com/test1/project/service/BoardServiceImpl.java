@@ -39,5 +39,26 @@ public class BoardServiceImpl implements BoardService {
 	public int countBoard(Search search) {
 		return boardMapper.countBoard(search);
 	}
+	
+	public void insertBoard(Board board) {
+		boardMapper.insertBoard(board);
+		
+		if (board.getaGroup() == 0) {
+			boardMapper.updateBoard(board);
+		
+		} else { 
+			boardMapper.updateReBoard(board);
+		}
+		
+	}
+	
+	public void editBoard(Board board) {
+		boardMapper.editBoard(board);
+	
+	}
+	
+	public int count(Board board) {
+		return boardMapper.count(board);
+	}
 
 }

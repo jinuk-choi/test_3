@@ -17,4 +17,10 @@ public interface BoardService {
 	public void deleteBoard(int aIdx);
 	
 	public int countBoard(Search search);
+	
+	public void insertBoard(Board board);
+	
+	public void editBoard(Board board);
+	
+	public int count(Board board);
 }

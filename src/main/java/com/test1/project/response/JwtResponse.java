@@ -6,14 +6,16 @@ public class JwtResponse {
 	private String token;
 	private String username;
 	private String name;
+	private int uIdx;
 	private List<String> roles;
 	private String type = "Bearer";
 	
-	public JwtResponse(String jwt, String id, String u_name, List<String> u_roles) {
+	public JwtResponse(String jwt, String id, String u_name, int uIdx, List<String> u_roles) {
 		this.token = jwt;
 		this.username = id;
 		this.name = u_name;
 		this.roles = u_roles;
+		this.uIdx = uIdx;
 	}
 	public String getToken() {
 		return token;
@@ -43,6 +45,12 @@ public class JwtResponse {
 		return type;
 	}
 	
+	public int getuIdx() {
+		return uIdx;
+	}
+	public void setuIdx(int uIdx) {
+		this.uIdx = uIdx;
+	}
 	@Override
 	public String toString() {
 		return "JwtResponse [token=" + token + ", username=" + username + ", name=" + name + ", roles=" + roles + "]";

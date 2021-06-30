@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,22 +66,47 @@ public class TestController {
 	
 	@GetMapping("/boardDetail")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  boardDetail(@RequestParam int aIdx) {
-		
+	public ResponseEntity<?>  boardDetail(@RequestParam int aIdx, Board board) {
+		boardService.count(board);
 		logger.info("///"+aIdx);
 		
-		Board board = boardService.selectBoardDetail(aIdx);
+		board = boardService.selectBoardDetail(aIdx);
 		return ResponseEntity.ok(board);
 	}
 	
 	@DeleteMapping("/boardDelete/{aIdx}")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?>  boardDelete(@PathVariable(value = "aIdx") int aIdx) {
-		
-		logger.info("delete"+aIdx);
 		boardService.deleteBoard(aIdx);
+		logger.info("delete"+aIdx);
+		
+		Pagination<Board> pagination = new Pagination<Board>();
+		List<Board> boardList = null;
+		
+		boardList = boardService.selectBoardList(pagination);
+		pagination.setBoardList(boardList);
+		
+		return ResponseEntity.ok(pagination);
+	}
 	
-		return ResponseEntity.ok(aIdx);
+	@PostMapping("/boardWrite")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  boardWrite(@RequestBody Board board) {
+		boardService.insertBoard(board);
+		logger.info("Write"+board);
+		
+		
+		return ResponseEntity.ok(board);
+	}
+	
+	@PostMapping("/boardEdit")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  boardEdit(@RequestBody Board board) {
+		boardService.editBoard(board);
+		logger.info("Edit"+board);
+		
+		
+		return ResponseEntity.ok(board);
 	}
 	
 

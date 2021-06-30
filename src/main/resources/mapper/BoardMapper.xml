@@ -27,24 +27,25 @@
 	    FROM           board ta
 	    LEFT JOIN 	   user tb ON ta.u_idx = tb.u_idx,
 	    			   (SELECT @rownum := (SELECT	COUNT(*)-#{pageNum}+1 FROM board ta)) tc
-	     				<!--  
-	    				 <if test="search != null ">
-	    				 <where> 
-				    	  	<if test="search.type == 1">
-				    	  		a_title LIKE CONCAT('%', #{search.keyword}, '%')
-				    	  	</if>
-				    	  	
-				    	  	<if test="search.type == 2">
-				    	  		a_content LIKE CONCAT('%', #{search.keyword}, '%')
-				    	  	</if>
-				    	  	
-				    	  	<if test="search.type == 3">
-				    	  		a_content LIKE CONCAT('%', #{search.keyword}, '%')
-				    	  			or a_title  LIKE CONCAT('%', #{search.keyword}, '%')
-				    	  	</if>				    	
-						</where>
-	   				</if> -->
-	      <!-- ORDER BY				a_group DESC, a_order DESC -->	  	  		   	
+	     				 
+		<if test="search != null ">
+			<where> 
+		  	  	<if test="search.type == 1">
+		  	  		a_title LIKE CONCAT('%', #{search.keyword}, '%')
+		  	  	</if>
+		  	  	
+		  	  	<if test="search.type == 2">
+		  	  		a_content LIKE CONCAT('%', #{search.keyword}, '%')
+		  	  	</if>
+		  	  	
+		  	  	<if test="search.type == 3">
+		  	  		a_content LIKE CONCAT('%', #{search.keyword}, '%')
+		  	  			or a_title  LIKE CONCAT('%', #{search.keyword}, '%')
+		  	  	</if>				    	
+			</where>
+		</if>
+		
+	    ORDER BY		a_group DESC, a_order DESC	     		   	
 	    LIMIT			#{pageNum},5
 	</select>
 	
@@ -62,16 +63,54 @@
 		WHERE			a_idx = #{aIdx}
 	</select>
 	
-	<select id="insertBoard" resultType="Board" parameterType="int">
-		INSERT INTO			
-		FROM				board
-		WHERE			a_idx = #{aIdx}
-	</select>
+	<insert id="insertBoard"  parameterType="Board">
+		INSERT INTO board (
+			a_title,
+			a_content,
+			a_group,
+			a_order,
+			a_depth,
+			u_idx
+		) VALUES (
+			#{aTitle},
+			#{aContent},
+			#{aGroup},
+			#{aOrder},
+			#{aDepth} + 1,
+			#{uIdx}
+		)
+		<selectKey keyProperty="aIdx" resultType="Integer">
+	        SELECT LAST_INSERT_ID()
+	    </selectKey>
+	</insert>
+	
+	<update id="updateBoard" parameterType="Board" >
+		UPDATE board SET a_group = LAST_INSERT_ID() WHERE a_idx = LAST_INSERT_ID()
+	</update>
+
+	<update id="updateReBoard" parameterType="Board" >
+		UPDATE board SET a_order = a_order + 1 where a_group = #{aGroup} and a_order >= #{aOrder} and a_idx != last_insert_id() 
+	</update> 
 	
 	<!-- 게시글 갯수 -->
 	<select id="countBoard" resultType="int">
 		SELECT COUNT(*)  count
 		FROM			 board
 	</select>
+	
+	<!-- 게시글 수정하기 -->
+	<update id="editBoard" parameterType="Board">
+		UPDATE board 
+		SET 			a_title = #{aTitle},
+						a_content = #{aContent}
+		WHERE			a_idx = #{aIdx}	
+	</update>  
+	
+	<!-- 조회수  -->
+	<update id="count" parameterType="Board">
+		UPDATE 			board 
+		SET 			a_count = a_count + 1
+		WHERE			a_idx = #{aIdx}	
+	</update>  
 	
 </mapper>
