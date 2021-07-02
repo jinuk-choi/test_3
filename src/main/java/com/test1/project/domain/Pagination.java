@@ -15,7 +15,8 @@ public class Pagination<T> {
 	public static final int pageUnit=5;  // 한번에 불러 올 pagination 수
 	public static final int perPage=5;   // 한번에 불러 올 userCount 수
 	Search search;
-	List<T> boardList;
+	List<T> list;
+	
 
 	
 	
@@ -109,12 +110,14 @@ public class Pagination<T> {
 		this.search = search;
 	}
 
-	public List<T> getBoardList() {
-		return boardList;
+	public List<T> getList() {
+		return list;
 	}
 
-	public void setBoardList(List<T> boardList) {
-		this.boardList = boardList;
-	} 
-	
+	public void setList(List<T> list) {
+		this.list = list;
+	}
+
+
+
 }

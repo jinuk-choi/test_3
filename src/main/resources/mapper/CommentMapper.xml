@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test1.project.mapper.CommentMapper">
+
+<!-- 댓글 목록 -->
+<resultMap type="User" id="User">
+	<result column="u_idx" property="uIdx"/>
+	<result column="u_name" property="name"/>
+</resultMap>  
+
+<resultMap type="Comment" id="Comment">
+	<result column="b_idx" property="bIdx"/>
+	<result column="u_idx" property="uIdx"/>
+	<result column="b_title" property="bTitle"/>
+	<result column="b_content" property="bContent"/>
+	<result column="b_redate" property="bRedate"/>
+	<result column="a_idx" property="aIdx"/>
+	<result column="b_group" property="bGroup"/>
+	<result column="b_order" property="bOrder"/>
+	<result column="b_depth" property="bDepth"/>
+	
+	
+	<association property="user" resultMap="User"/>
+</resultMap> 
+
+<select id="selectCommentList" parameterType="Comment" resultMap="Comment">
+    	  SELECT         ta.*, tb.u_idx, tb.u_name		             
+	      FROM           comment ta
+	      LEFT JOIN 	 user tb ON ta.u_idx = tb.u_idx	
+	      WHERE			 a_idx = #{aIdx}		
+	      ORDER BY		 b_group DESC, b_order DESC		  	  		   	
+	      LIMIT			 #{pageNum},3
+</select>
+
+<!-- 댓글 갯수 -->
+<select id="commentCount"  resultType="int">
+    	  SELECT COUNT(*)	count	             
+	      FROM           	comment	  
+	      WHERE			 a_idx = #{aIdx}				  	  		   	
+	      
+</select>
+
+<!-- 댓글 작성 -->
+<insert id="insertComment" parameterType="Comment">
+    	  INSERT INTO comment (
+			u_idx,
+			a_idx,
+			b_content,
+			b_group,
+			b_order,
+			b_depth
+			
+		) VALUES (
+			#{uIdx},
+			#{aIdx},
+			#{bContent},
+			#{bGroup},
+			#{bOrder},
+			#{bDepth} + 1		
+		)
+		
+		<selectKey keyProperty="bIdx" resultType="Integer">
+	        SELECT LAST_INSERT_ID()
+	    </selectKey>			  	  		   	
+	      
+</insert>
+
+<update id="updateComment" parameterType="Comment" >
+	UPDATE comment SET b_group = LAST_INSERT_ID() WHERE b_idx = LAST_INSERT_ID()
+</update>
+
+<update id="updateReComment" parameterType="Comment" >
+	UPDATE comment SET b_order = b_order + 1 where b_group = #{bGroup} and b_order >= #{bOrder} and b_idx != last_insert_id()
+</update> 
+
+<!-- 댓글 수정 -->
+<update id="editComment" parameterType="Comment">
+	UPDATE  comment
+	SET		b_content = #{bContent}
+	WHERE	b_idx = #{bIdx}	   	
+	      
+</update>
+
+<!-- 댓글 삭제 -->
+<delete id="commentDelete" parameterType="Comment">
+    	 DELETE FROM comment
+    	 WHERE		 b_idx = #{bIdx}  		   	
+</delete>
+
+</mapper>

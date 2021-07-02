@@ -19,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test1.project.domain.Board;
+import com.test1.project.domain.Comment;
+import com.test1.project.domain.ListVo;
 import com.test1.project.domain.Pagination;
 import com.test1.project.domain.Search;
 import com.test1.project.service.BoardService;
+import com.test1.project.service.CommentService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -31,6 +34,8 @@ public class TestController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private CommentService commentService;
 	
 	
 	@GetMapping("/all")
@@ -53,7 +58,7 @@ public class TestController {
 		count = boardService.countBoard(search);
 		pagination = new Pagination<Board>(page,count);
 		boardList = boardService.selectBoardList(pagination);
-		pagination.setBoardList(boardList);
+		pagination.setList(boardList);
 		
 		return ResponseEntity.ok(pagination);
 	}
@@ -80,13 +85,8 @@ public class TestController {
 		boardService.deleteBoard(aIdx);
 		logger.info("delete"+aIdx);
 		
-		Pagination<Board> pagination = new Pagination<Board>();
-		List<Board> boardList = null;
 		
-		boardList = boardService.selectBoardList(pagination);
-		pagination.setBoardList(boardList);
-		
-		return ResponseEntity.ok(pagination);
+		return ResponseEntity.ok(aIdx);
 	}
 	
 	@PostMapping("/boardWrite")
@@ -107,6 +107,57 @@ public class TestController {
 		
 		
 		return ResponseEntity.ok(board);
+	}
+	
+	@GetMapping({"/commentList","/commentList/{pageOpt}"})
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  commentList(@PathVariable Optional<Integer> pageOpt
+									     ,@RequestParam int aIdx
+										 ,Board board) {
+		
+		int count = 0;
+		int page = pageOpt.isPresent() ? pageOpt.get() : 1;
+		int pageNum = 0;
+		
+		Pagination<Comment> pagination = null;
+		List<Comment> commentList = null;
+		ListVo listvo = null;
+		
+		count = commentService.commentCount(board);
+		pagination = new Pagination<Comment>(page,count);
+		
+		pageNum = pagination.getPageNum();
+		listvo = new ListVo(aIdx,pageNum);
+		commentList = commentService.selectCommentList(listvo);
+		pagination.setList(commentList);
+		
+		return ResponseEntity.ok(pagination);
+	}
+	
+	@DeleteMapping("/commentDelete/{bIdx}")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  commentDelete(@PathVariable(value = "bIdx") int bIdx,
+											@RequestParam int aIdx,
+											Board board) {
+		commentService.commentDelete(bIdx);
+		
+		int count = 0;
+		int page = 1;
+		int pageNum = 0;
+		
+		Pagination<Comment> pagination = null;
+		List<Comment> commentList = null;
+		ListVo listvo = null;
+		
+		count = commentService.commentCount(board);
+		pagination = new Pagination<Comment>(page,count);
+		pageNum = pagination.getPageNum();
+		listvo = new ListVo(aIdx,pageNum);
+		commentList = commentService.selectCommentList(listvo);
+		pagination.setList(commentList);
+		
+		
+		return ResponseEntity.ok(pagination);
 	}
 	
 
