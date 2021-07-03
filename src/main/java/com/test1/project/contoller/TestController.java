@@ -160,5 +160,28 @@ public class TestController {
 		return ResponseEntity.ok(pagination);
 	}
 	
+	@PostMapping("/commentWrite")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  commentWrite(@RequestBody Comment comment) {
+		commentService.insertComment(comment);
+		logger.info("Write"+comment);
+		
+		
+		return ResponseEntity.ok(comment);
+	}
+	
+	@PostMapping("/commentEdit")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?>  commentEdit(@RequestBody Comment comment) {
+		commentService.editComment(comment);
+		logger.info("Edit"+comment);
+		
+		
+		return ResponseEntity.ok(comment);
+	}
+	
+	
+	
+	
 
 }
