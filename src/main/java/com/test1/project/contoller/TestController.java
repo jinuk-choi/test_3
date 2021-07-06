@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,20 +44,26 @@ public class TestController {
 		return "Public Content.";
 	}
 	
-	@GetMapping({"/user","/user/{pageOpt}"})
+	@GetMapping({"/user","/user/{pageOpt}","/user/{pageOpt}/{typeOpt}/{keywordOpt}"})
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  userAccess(@PathVariable Optional<Integer> pageOpt) {
+	public ResponseEntity<?>  userAccess(@PathVariable Optional<Integer> pageOpt
+										,@PathVariable Optional<Integer> typeOpt 
+										,@PathVariable Optional<String> keywordOpt ) {
 		Search search = null;
 		int count = 0;
 		int page = pageOpt.isPresent() ? pageOpt.get() : 1;
+		int type = typeOpt.isPresent() ? typeOpt.get() : 0;
+		String keyword = keywordOpt.isPresent() ? keywordOpt.get() : null ;
+		
+		if(keyword != null ) {
+			search = new Search(type, keyword);
+		}
 		
 		Pagination<Board> pagination = new Pagination<Board>();
 		List<Board> boardList = null;
 		
-		
-		
 		count = boardService.countBoard(search);
-		pagination = new Pagination<Board>(page,count);
+		pagination = new Pagination<Board>(page,count,search);
 		boardList = boardService.selectBoardList(pagination);
 		pagination.setList(boardList);
 		
@@ -162,22 +169,55 @@ public class TestController {
 	
 	@PostMapping("/commentWrite")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  commentWrite(@RequestBody Comment comment) {
+	public ResponseEntity<?>  commentWrite(@RequestBody  Comment comment
+										  ,@RequestParam int aIdx
+										  ,Board board) {
 		commentService.insertComment(comment);
 		logger.info("Write"+comment);
 		
+		int count = 0;
+		int page = 1;
+		int pageNum = 0;
 		
-		return ResponseEntity.ok(comment);
+		Pagination<Comment> pagination = null;
+		List<Comment> commentList = null;
+		ListVo listvo = null;
+		
+		count = commentService.commentCount(board);
+		pagination = new Pagination<Comment>(page,count);
+		pageNum = pagination.getPageNum();
+		listvo = new ListVo(aIdx,pageNum);
+		commentList = commentService.selectCommentList(listvo);
+		pagination.setList(commentList);
+		
+		return ResponseEntity.ok(pagination);
 	}
 	
 	@PostMapping("/commentEdit")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?>  commentEdit(@RequestBody Comment comment) {
+	public ResponseEntity<?>  commentEdit(@RequestBody Comment comment
+										 ,@RequestParam int aIdx
+										 ,Board board) {
 		commentService.editComment(comment);
 		logger.info("Edit"+comment);
 		
+		int count = 0;
+		int page = 1;
+		int pageNum = 0;
 		
-		return ResponseEntity.ok(comment);
+		Pagination<Comment> pagination = null;
+		List<Comment> commentList = null;
+		ListVo listvo = null;
+		
+		count = commentService.commentCount(board);
+		pagination = new Pagination<Comment>(page,count);
+		pageNum = pagination.getPageNum();
+		listvo = new ListVo(aIdx,pageNum);
+		commentList = commentService.selectCommentList(listvo);
+		pagination.setList(commentList);
+		
+		
+		return ResponseEntity.ok(pagination);
 	}
 	
 	

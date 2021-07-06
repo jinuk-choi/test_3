@@ -14,6 +14,8 @@ public class Comment {
 	private int bGroup;
 	private int bOrder;
 	private int bDepth;
+	private boolean bTn;
+	private boolean eDit;
 	
 	
 	public int getbIdx() {
@@ -81,6 +83,18 @@ public class Comment {
 	}
 	public void setbDepth(int bDepth) {
 		this.bDepth = bDepth;
+	}
+	public boolean isbTn() {
+		return bTn;
+	}
+	public void setbTn(boolean bTn) {
+		this.bTn = bTn;
+	}
+	public boolean iseDit() {
+		return eDit;
+	}
+	public void seteDit(boolean eDit) {
+		this.eDit = eDit;
 	}
 	
 

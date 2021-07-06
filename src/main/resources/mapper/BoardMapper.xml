@@ -96,6 +96,23 @@
 	<select id="countBoard" resultType="int">
 		SELECT COUNT(*)  count
 		FROM			 board
+		
+		<if test="type != 0  ">
+ 			<where> 
+	    	  	<if test="type == 1">
+	    	  		a_title LIKE CONCAT('%', #{keyword}, '%')
+	    	  	</if>
+	    	  	
+	    	  	<if test="type == 2">
+	    	  		a_content LIKE CONCAT('%', #{keyword}, '%')
+	    	  	</if>
+	    	  	
+	    	  	<if test="type == 3">
+	    	  		a_content LIKE CONCAT('%', #{keyword}, '%')
+	    	  			or a_title  LIKE CONCAT('%', #{keyword}, '%')
+	    	  	</if>				    	
+			</where>
+	   	</if>
 	</select>
 	
 	<!-- 게시글 수정하기 -->
